@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}My Django Site{% endblock %}</title>
+    <style>
+      body {
+        padding-top: 45px;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: url('https://wallpaperaccess.com/full/1385494.jpg') no-repeat center center fixed;
+        background-size: cover;
+        }
+
+     nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        backdrop-filter: blur(3.5px);
+        -webkit-backdrop-filter: blur(3.5px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+
+        color: white;
+        padding: 0.5rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        z-index: 9999;
+        }
+
+
+      .side-logo {
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 2.2rem;
+  color: #ddd;
+  letter-spacing: 2px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.side-logo-img {
+  width: 20px;      /* adjust size as needed */
+  height: 20px;
+  object-fit: contain;
+  border-radius: 6px; /* optional rounded corners */
+  user-select: none;
+}
+      nav ul {
+        list-style: none;
+        display: flex;
+        gap: 1rem;
+        margin: 0;
+        padding: 0;
+      }
+      nav ul li a {
+        color: #eee; /* a lighter shade */
+        text-decoration: none;
+        padding: 0.3rem 0.5rem;
+        border-radius: 3px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        nav ul li a:hover {
+        color: white;
+        }
+
+      /* Mobile small hamburger icon */
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        gap: 4px;
+      }
+      .hamburger div {
+        width: 20px;
+        height: 2px;
+        background: white;
+      }
+
+      @media (max-width: 480px) {
+        nav ul {
+          display: none;
+          flex-direction: column;
+          background: #222;
+          position: absolute;
+          top: 40px;
+          right: 10px;
+          border-radius: 5px;
+          padding: 0.5rem 1rem;
+        }
+        nav ul.active {
+          display: flex;
+        }
+        .hamburger {
+          display: flex;
+        }
+      }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <img src="https://th.bing.com/th/id/OIP.gdxuCBkcGx3AG-C6Qz3StwAAAA?r=0&rs=1&pid=ImgDetMain" alt="Logo" class="side-logo-img" />
+    PANARI CMIS</div>
+  <ul id="nav-links">
+    {% if request.user.is_authenticated %}
+    {% if request.user.userprofile.role == 'admin' or request.user.userprofile.role == 'engineer' %}
+        <li><a href="{% url 'request_material' %}">Stock</a></li>
+        <li><a href="{% url 'view_my_requests' %}">My Requests</a></li>
+    {% endif %}
+{% endif %}
+
+    <!-- <li><a href="#">Out of Stock</a></li> -->
+     <li>
+    <form method="POST" action="{% url 'logout' %}" class="logout-form" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">
+        <span class="label">Logout</span>
+        </button>
+    </form>
+    </li>
+  </ul>
+  <div class="hamburger" id="hamburger">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</nav>
+
+{% block content %}
+<!-- Page-specific content goes here -->
+{% endblock %}
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('nav-links');
+
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+  });
+</script>
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+<body>
+  <!-- Side Navbar -->
+  <nav class="side-nav" id="sideNav">
+    <div class="side-logo">
+        <img src="https://th.bing.com/th/id/OIP.gdxuCBkcGx3AG-C6Qz3StwAAAA?r=0&rs=1&pid=ImgDetMain" alt="Logo" class="side-logo-img" />
+        PANARI CMIS</div>
+    <ul class="side-nav-links">
+      <li class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+        <a href="{% url 'material-list' %}">
+          <span class="icon">🏠</span>
+          <span class="label">Inventory</span>
+        </a>
+      </li>
+      <li class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+        <a href="{% url 'add-material' %}">
+          <span class="icon">🏠</span>
+          <span class="label">Add Items</span>
+        </a>
+      </li>
+      <li class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+        <a href="{% url 'view_requests' %}">
+          <span class="icon">ℹ️</span>
+          <span class="label">Requests</span>
+        </a>
+      </li>
+      <li>
+  <form method="POST" action="{% url 'logout' %}" class="logout-form" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" class="logout-btn" style="all: unset; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.6rem 1.8rem; font-size: 0.9rem; color: #bbb; border-left: 4px solid transparent; border-radius: 0 7px 7px 0; transition: background-color 0.25s ease, border-color 0.25s ease;">
+      <span class="icon">🚪</span>
+      <span class="label">Logout</span>
+    </button>
+  </form>
+</li>
+
+    </ul>
+    <button id="toggleBtn" aria-label="Toggle Sidebar">☰</button>
+  </nav>
+
+  <!-- Main Content -->
+  <main id="mainContent" style="padding: 2rem;">
+    {% block content %}
+    <!-- Page-specific content will go here -->
+    {% endblock %}
+  </main>
+
+
+<style>
+  /* Sidebar container */
+  .side-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 200px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(31,38,135,0.22));
+    box-shadow: 0 6px 24px 0 rgba(31, 38, 135, 0.25);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+    border-radius: 0 10px 10px 0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 1.2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 9999;
+    transition: transform 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+  }
+
+  /* Logo */
+  .side-logo {
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 2.2rem;
+  color: #ddd;
+  letter-spacing: 2px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.side-logo-img {
+  width: 30px;      /* adjust size as needed */
+  height: 30px;
+  object-fit: contain;
+  border-radius: 6px; /* optional rounded corners */
+  user-select: none;
+}
+
+
+  /* Nav links container */
+  .side-nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  /* Each link */
+  .side-nav-links li {
+    width: 100%;
+  }
+
+  .side-nav-links li a {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
+    color: #bbb;
+    text-decoration: none;
+    padding: 0.6rem 1.8rem;
+    font-size: 0.9rem;
+    border-left: 4px solid transparent;
+    border-radius: 0 7px 7px 0;
+    transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+  }
+
+  /* Icon style */
+  .side-nav-links li a .icon {
+    font-size: 1.15rem;
+  }
+
+  /* Label style */
+  .side-nav-links li a .label {
+    white-space: nowrap;
+  }
+
+  /* Hover effect */
+  .side-nav-links li a:hover {
+    background: rgba(76, 175, 80, 0.75);
+    color: #fff;
+    border-left-color: #4caf50;
+    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.55);
+  }
+
+  /* Active link */
+  .side-nav-links li.active a {
+    background: #4caf50;
+    color: #fff;
+    border-left-color: #388e3c;
+    box-shadow: 0 3px 12px rgba(56, 142, 60, 0.7);
+    font-weight: 600;
+  }
+
+  /* Adjust body content */
+  body {
+    margin-left: 200px;
+    transition: margin-left 0.3s ease;
+    background: url('https://wallpaperaccess.com/full/1385494.jpg') no-repeat center center fixed;
+    background-size: cover;
+  }
+
+  /* Hamburger toggle button */
+  #toggleBtn {
+    display: none;
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #ddd;
+    font-size: 1.6rem;
+    cursor: pointer;
+    padding: 0.25rem 0.6rem;
+    border-radius: 8px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 6px 24px 0 rgba(31, 38, 135, 0.28);
+    transition: background-color 0.3s ease;
+  }
+  #toggleBtn:hover {
+    background: rgba(76,175,80,0.85);
+    color: white;
+  }
+
+  /* Responsive: hide sidebar and show toggle button */
+  @media (max-width: 768px) {
+    .side-nav {
+      transform: translateX(-100%);
+    }
+    body {
+      margin-left: 0;
+    }
+    #toggleBtn {
+      display: block;
+    }
+    .side-nav.active {
+      transform: translateX(0);
+    }
+  }
+</style>
+
+<script>
+  // Toggle sidebar on mobile
+  const toggleBtn = document.getElementById('toggleBtn');
+  const sideNav = document.getElementById('sideNav');
+
+  toggleBtn.addEventListener('click', () => {
+    sideNav.classList.toggle('active');
+  });
+</script>

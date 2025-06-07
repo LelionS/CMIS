@@ -1,0 +1,226 @@
+{% extends 'include/side-nav.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Include DataTables CSS in <head> or before the table -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+<style>
+body {
+    margin: 0;
+    background: url('https://wallpaperaccess.com/full/1385494.jpg') no-repeat center center fixed; background-size: cover;
+    font-family: 'Inter', sans-serif;
+    color: #eee;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-size: 2.5rem;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+
+  .table-container {
+    width: 100%;
+    max-width: 1200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 20px 25px;
+  }
+
+  table.dataTable {
+    border-collapse: separate !important;
+    border-spacing: 0 12px !important;
+    width: 100% !important;
+    background: transparent !important;
+  }
+
+  table.dataTable thead tr {
+    background-color: #8e9aa8;
+    color: #f0f0f0;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  table.dataTable thead th {
+    padding: 15px 12px;
+    border: none !important;
+  }
+
+  table.dataTable tbody tr {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.05);
+    transition: background-color 0.3s ease;
+  }
+
+  table.dataTable tbody tr:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  table.dataTable tbody td {
+    padding: 14px 12px;
+    color: #eee;
+    vertical-align: middle;
+    max-width: 160px;
+    word-wrap: break-word;
+  }
+
+  table.dataTable tbody td:nth-child(10) {
+    max-width: 110px;
+    text-align: center;
+    padding: 10px;
+  }
+
+  table.dataTable tbody td img {
+    max-width: 100px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    object-fit: cover;
+  }
+
+  div.dataTables_wrapper {
+    margin-top: 15px;
+    color: #eee;
+  }
+
+  div.dataTables_wrapper .dataTables_filter label,
+  div.dataTables_wrapper .dataTables_length label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  div.dataTables_wrapper .dataTables_filter input,
+  div.dataTables_wrapper .dataTables_length select {
+    border-radius: 8px;
+    border: none;
+    padding: 6px 12px;
+    margin-left: 8px;
+    font-size: 1rem;
+    outline: none;
+    box-shadow: 0 0 8px rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.12);
+    color: #eee;
+    transition: box-shadow 0.3s ease;
+  }
+
+  div.dataTables_wrapper .dataTables_filter input:focus,
+  div.dataTables_wrapper .dataTables_length select:focus {
+    box-shadow: 0 0 12px rgba(255,255,255,0.3);
+  }
+
+  .dataTables_paginate .paginate_button {
+    background: transparent;
+    border: 2px solid #eee;
+    color: #eee !important;
+    border-radius: 8px;
+    margin: 0 6px;
+    padding: 7px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+  }
+
+  .dataTables_paginate .paginate_button.current,
+  .dataTables_paginate .paginate_button:hover {
+    background: #ff6e40;
+    border-color: #ff6e40;
+    color: white !important;
+    box-shadow: 0 0 10px #ff6e40;
+  }
+
+  .dt-button {
+    background-color: #ff6e40 !important;
+    border: none !important;
+    color: #fff !important;
+    padding: 8px 16px !important;
+    margin-right: 8px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 14px rgba(255,110,64,0.6) !important;
+    transition: background-color 0.3s ease !important;
+  }
+  .dt-button:hover {
+    background-color: #ff784e !important;
+    box-shadow: 0 6px 20px rgba(255,120,78,0.9) !important;
+  }
+</style>
+
+<h2 style="margin-bottom: 1.5rem;">Material Requests</h2>
+
+<div class="table-container">
+  <table id="materialsTable" class="display nowrap" style="width:100%">
+    <thead>
+      <tr>
+        <th>Material</th>
+        <th>Qty</th>
+        <th>Requested By</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Status Updated By</th>
+        <th>Status Updated At</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for request in requests %}
+      <tr>
+        <td>{{ request.material.name }}</td>
+        <td>{{ request.quantity_requested }}</td>
+        <td>{{ request.requested_by }}</td>
+        <td>{{ request.request_date }}</td>
+        <td>{{ request.status }}</td>
+        <td>{{ request.status_updated_by }}</td>
+        <td>{{ request.status_updated_at }}</td>
+        <td>
+          {% if request.status == "Pending" %}
+            <a href="{% url 'approve_request' request.id %}" style="text-decoration: none; color:#28d44d">✅ Approve</a> |
+            <a href="{% url 'decline_request' request.id %}" style="text-decoration: none; color:#e50c08">❌ Decline</a>
+          {% else %}
+            <span class="no-actions">No actions</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Include jQuery and DataTables JS at the bottom -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $('#materialsTable').DataTable({
+      responsive: true,
+      pageLength: 10,
+      order: [[3, 'desc']], // Order by request date
+      language: {
+        search: "🔍 Search:",
+        lengthMenu: "Show _MENU_ entries",
+        info: "Showing _START_ to _END_ of _TOTAL_ requests",
+        zeroRecords: "No matching records found",
+        infoEmpty: "No requests available",
+        infoFiltered: "(filtered from _MAX_ total entries)"
+      }
+    });
+  });
+</script>
+
+{% endblock %}

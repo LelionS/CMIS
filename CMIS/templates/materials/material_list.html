@@ -1,0 +1,264 @@
+{% extends 'include/side-nav.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Materials List</title>
+<link
+  href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+  rel="stylesheet"
+/>
+<link
+  href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css"
+  rel="stylesheet"
+/>
+<link
+  href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css"
+  rel="stylesheet"
+/>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+  body {
+    margin: 0;
+    background: url('https://wallpaperaccess.com/full/1385494.jpg') no-repeat center center fixed; background-size: cover;
+    font-family: 'Inter', sans-serif;
+    color: #eee;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-size: 2.5rem;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+
+  .table-container {
+    width: 100%;
+    max-width: 1200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 20px 25px;
+  }
+
+  table.dataTable {
+    border-collapse: separate !important;
+    border-spacing: 0 12px !important;
+    width: 100% !important;
+    background: transparent !important;
+  }
+
+  table.dataTable thead tr {
+    background-color: #8e9aa8;
+    color: #f0f0f0;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  table.dataTable thead th {
+    padding: 15px 12px;
+    border: none !important;
+  }
+
+  table.dataTable tbody tr {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.05);
+    transition: background-color 0.3s ease;
+  }
+
+  table.dataTable tbody tr:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  table.dataTable tbody td {
+    padding: 14px 12px;
+    color: #eee;
+    vertical-align: middle;
+    max-width: 160px;
+    word-wrap: break-word;
+  }
+
+  table.dataTable tbody td:nth-child(10) {
+    max-width: 110px;
+    text-align: center;
+    padding: 10px;
+  }
+
+  table.dataTable tbody td img {
+    max-width: 100px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    object-fit: cover;
+  }
+
+  div.dataTables_wrapper {
+    margin-top: 15px;
+    color: #eee;
+  }
+
+  div.dataTables_wrapper .dataTables_filter label,
+  div.dataTables_wrapper .dataTables_length label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  div.dataTables_wrapper .dataTables_filter input,
+  div.dataTables_wrapper .dataTables_length select {
+    border-radius: 8px;
+    border: none;
+    padding: 6px 12px;
+    margin-left: 8px;
+    font-size: 1rem;
+    outline: none;
+    box-shadow: 0 0 8px rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.12);
+    color: #eee;
+    transition: box-shadow 0.3s ease;
+  }
+
+  div.dataTables_wrapper .dataTables_filter input:focus,
+  div.dataTables_wrapper .dataTables_length select:focus {
+    box-shadow: 0 0 12px rgba(255,255,255,0.3);
+  }
+
+  .dataTables_paginate .paginate_button {
+    background: transparent;
+    border: 2px solid #eee;
+    color: #eee !important;
+    border-radius: 8px;
+    margin: 0 6px;
+    padding: 7px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+  }
+
+  .dataTables_paginate .paginate_button.current,
+  .dataTables_paginate .paginate_button:hover {
+    background: #ff6e40;
+    border-color: #ff6e40;
+    color: white !important;
+    box-shadow: 0 0 10px #ff6e40;
+  }
+
+  .dt-button {
+    background-color: #ff6e40 !important;
+    border: none !important;
+    color: #fff !important;
+    padding: 8px 16px !important;
+    margin-right: 8px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 14px rgba(255,110,64,0.6) !important;
+    transition: background-color 0.3s ease !important;
+  }
+  .dt-button:hover {
+    background-color: #ff784e !important;
+    box-shadow: 0 6px 20px rgba(255,120,78,0.9) !important;
+  }
+</style>
+</head>
+<body>
+<div class="table-container">
+  <table id="materialsTable" class="display responsive nowrap" style="width:100%">
+    <thead>
+      <tr>
+        <th>Material Name</th>
+        <th>Quantity Ordered</th>
+        <th>Unit</th>
+        <th>Supplier</th>
+        <th>Unit Cost</th>
+        <th>Total Cost</th>
+        <th>Delivery Date</th>
+        <th>Batch Code</th>
+        <th>Amount in Stock</th>
+        <th>Image</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for material in materials %}
+      <tr>
+        <td>{{ material.name }}</td>
+        <td>{{ material.quantity }}</td>
+        <td>{{ material.unit }}</td>
+        <td>{{ material.supplier }}</td>
+        <td>{{ material.unit_cost }}</td>
+        <td>{{ material.total_cost }}</td>
+        <td>{{ material.delivery_date }}</td>
+        <td>{{ material.batch_code }}</td>
+        <td>{{ material.amount_in_stock }}</td>
+        <td>
+          {% if material.image %}
+          <img src="{{ material.image.url }}" alt="{{ material.name }}" />
+          {% else %}
+          —
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="10" style="text-align:center; font-style: italic; color: #bbb;">No materials available.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $('#materialsTable').DataTable({
+      responsive: true,
+      pageLength: 10,
+      lengthMenu: [5, 10, 25, 50, 100],
+      order: [[0, 'asc']],
+      dom: 'Bfltip',
+      buttons: [
+        'copyHtml5',
+        'excelHtml5',
+        'pdfHtml5',
+        'print',
+        'colvis'
+      ],
+      columnDefs: [
+        { orderable: false, targets: 9 }
+      ],
+      language: {
+        emptyTable: "No materials available.",
+        search: "Search all columns:"
+      }
+    });
+  });
+</script>
+</body>
+</html>
+
+{% endblock %}

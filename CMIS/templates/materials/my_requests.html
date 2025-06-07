@@ -1,0 +1,212 @@
+{% extends 'include/nav.html' %}
+{% block title %}My Requests{% endblock %}
+
+{% block content %}
+<!-- DataTables CSS CDN -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+<style>
+  body {
+    margin: 0;
+    background: url('https://wallpaperaccess.com/full/1385494.jpg') no-repeat center center fixed; 
+    background-size: cover;
+    font-family: 'Inter', sans-serif;
+    color: #eee;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  h2 {
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-size: 2.5rem;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+
+  .table-container {
+    width: 100%;
+    max-width: 1200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 20px 25px;
+  }
+
+  table.dataTable {
+    border-collapse: separate !important;
+    border-spacing: 0 12px !important;
+    width: 100% !important;
+    background: transparent !important;
+  }
+
+  table.dataTable thead tr {
+    background-color: #8e9aa8;
+    color: #f0f0f0;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  table.dataTable thead th {
+    padding: 15px 12px;
+    border: none !important;
+  }
+
+  table.dataTable tbody tr {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.05);
+    transition: background-color 0.3s ease;
+  }
+
+  table.dataTable tbody tr:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  table.dataTable tbody td {
+    padding: 14px 12px;
+    color: #eee;
+    vertical-align: middle;
+    max-width: 160px;
+    word-wrap: break-word;
+  }
+
+  div.dataTables_wrapper {
+    margin-top: 15px;
+    color: #eee;
+  }
+
+  div.dataTables_wrapper .dataTables_filter label,
+  div.dataTables_wrapper .dataTables_length label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  div.dataTables_wrapper .dataTables_filter input,
+  div.dataTables_wrapper .dataTables_length select {
+    border-radius: 8px;
+    border: none;
+    padding: 6px 12px;
+    margin-left: 8px;
+    font-size: 1rem;
+    outline: none;
+    box-shadow: 0 0 8px rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.12);
+    color: #eee;
+    transition: box-shadow 0.3s ease;
+  }
+
+  div.dataTables_wrapper .dataTables_filter input:focus,
+  div.dataTables_wrapper .dataTables_length select:focus {
+    box-shadow: 0 0 12px rgba(255,255,255,0.3);
+  }
+
+  .dataTables_paginate .paginate_button {
+    background: transparent;
+    border: 2px solid #eee;
+    color: #eee !important;
+    border-radius: 8px;
+    margin: 0 6px;
+    padding: 7px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+  }
+
+  .dataTables_paginate .paginate_button.current,
+  .dataTables_paginate .paginate_button:hover {
+    background: #ff6e40;
+    border-color: #ff6e40;
+    color: white !important;
+    box-shadow: 0 0 10px #ff6e40;
+  }
+
+  .dt-button {
+    background-color: #ff6e40 !important;
+    border: none !important;
+    color: #fff !important;
+    padding: 8px 16px !important;
+    margin-right: 8px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 14px rgba(255,110,64,0.6) !important;
+    transition: background-color 0.3s ease !important;
+  }
+  .dt-button:hover {
+    background-color: #ff784e !important;
+    box-shadow: 0 6px 20px rgba(255,120,78,0.9) !important;
+  }
+
+  /* Status colors override for better visibility */
+  .status-pending {
+    color: #ffc107 !important;
+    font-weight: bold;
+  }
+  .status-approved {
+    color: #28a745 !important;
+    font-weight: bold;
+  }
+  .status-rejected {
+    color: #dc3545 !important;
+    font-weight: bold;
+  }
+</style>
+
+<div class="table-container">
+  <h2>📄 My Material Requests</h2>
+
+  {% if requests %}
+      <table id="requestsTable" class="display" style="width: 100%;">
+          <thead>
+              <tr>
+                  <th>Material</th>
+                  <th>Quantity</th>
+                  <th>Date Requested</th>    
+                  <th>Updated By</th>
+                  <th>Updated At</th>
+                  <th>Status</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for req in requests %}
+                  <tr>
+                      <td>{{ req.material.name }}</td>
+                      <td>{{ req.quantity_requested }}</td>
+                      <td>{{ req.request_date|date:"M d, Y H:i" }}</td>
+                      <td>{{ req.status_updated_by|default:"-" }}</td>
+                      <td>{{ req.status_updated_at|date:"M d, Y H:i" }}</td>
+                      <td>
+                        <span class="{% if req.status == 'Pending' %}status-pending{% elif req.status == 'Approved' %}status-approved{% else %}status-rejected{% endif %}">
+                          {{ req.status }}
+                        </span>
+                      </td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+  {% else %}
+      <p style="color: #eee;">You haven't made any material requests yet.</p>
+  {% endif %}
+</div>
+
+<!-- jQuery and DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<!-- DataTables Initialization -->
+<script>
+    $(document).ready(function() {
+        $('#requestsTable').DataTable({
+            "order": [[2, "desc"]], // order by date requested by default
+            "pageLength": 10,
+            "lengthChange": false
+        });
+    });
+</script>
+{% endblock %}
